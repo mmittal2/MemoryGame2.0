@@ -1,3 +1,11 @@
+"""
+NOTE: HAVEN'T ADDED FUNCTIONALITY ALLOWING SECOND TURN TO PLAYERS WHO GET A SET
+NOTE: HAVEN'T ADDED FUNCTIONALITY ALLOWING NUMBERS OTHER THAN 1 - 26 (SHOULD JUST THROW EXCEPTION INSTEAD OF CAUSING THE CODE TO CRASH)
+"""
+
+
+
+
 import random
 import time
 
@@ -80,4 +88,21 @@ while num_sets_taken < 13:
             print("That's not a set :(")
             display_matrix[int(first_card/6)][int(first_card%6)] = first_card
             display_matrix[int(second_card/6)][int(second_card%6)] = second_card 
-        time.sleep(2)    
+        time.sleep(2)
+
+# print out result
+winner = [1]
+for i in range(1, len(points)):
+    if points[i] > points[winner[0]]:
+        winner = [i + 1]
+    elif points[i] == points[winner[0]]:
+        winner.append(i + 1)
+winners = ""
+for w in winner:
+    winners += str(w) + " and "
+winners = winners[:-5]
+print("The game is over! Player " + winners + " won!")
+print("Below are the number of sets that each player collected:")
+for i in range(len(points)):
+    print("Player " + str(i + 1) + ": " + points[i] + " points")
+    
