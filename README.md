@@ -16,7 +16,8 @@ Design Decisions:
 A unique twist is added to the game. Instead of using the full deck of cards, only 3 suits are used. This way, there are 3 cards with the same value. When a player picks 2 cards with the same value, they have an option to try to find the 3rd card or keep their 2 cards. If they choose to try to find the 3rd card and they pick a card that doesn’t have the value they were looking for, they lose the 2 cards they found. Additionally, if a player picks a card that has the same value as one of the other player’s sets, they can steal that set from the other player. At the end, the winner is determined by who has the most points. A set of 2 cards with the same value is worth 2 points while a set of three cards with the same value is worth 4 points.
 
 Procedure:
-1. Create basic graphical user interface displaying 26 cards that are clickable.
-2. Write the logic for the code so that people can play the memory game without the twist.
-3. If time, add code to enable players to play the version with the twist if they wish.
-4. If time, add design elements to enhance the graphical user interface.
+1. Create the memory game (without the twist) in the terminal (no graphical user interface).
+2. Create basic graphical user interface displaying 26 cards that are clickable.
+3. Edit the logic for the code so that it works with the graphical user interface.
+4. If time, add code to enable players to play the version with the twist if they wish.
+5. If time, add design elements to enhance the graphical user interface.
