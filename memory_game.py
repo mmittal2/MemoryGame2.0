@@ -1,6 +1,5 @@
 """
-NOTE: HAVEN'T ADDED FUNCTIONALITY ALLOWING SECOND TURN TO PLAYERS WHO GET A SET
-NOTE: HAVEN'T ADDED FUNCTIONALITY ALLOWING NUMBERS OTHER THAN 1 - 26 (SHOULD JUST THROW EXCEPTION INSTEAD OF CAUSING THE CODE TO CRASH)
+NOTE: HAVEN'T ADDED THE TWIST - currently working on figuring out alternative to num_sets_taken
 """
 
 
@@ -13,31 +12,36 @@ import time
 cards = []
 cards.append("Ace of Hearts")
 cards.append("Ace of Diamonds")
+cards.append("Ace of Spades")
 for i in range(2, 10):
     value = str(i)
     cards.append(value + " of Hearts")
     cards.append(value + " of Diamonds")
+    cards.append(value + " of Spades")
 cards.append("Jack of Hearts")
 cards.append("Jack of Diamonds")
+cards.append("Jack of Spades")
 cards.append("Queen of Hearts")
 cards.append("Queen of Diamonds")
+cards.append("Queen of Spades")
 cards.append("King of Hearts")
 cards.append("King of Diamonds")
+cards.append("King of Spades")
 
 # shuffle the cards
 random.shuffle(cards)
 
 # create the matrix of cards
 cards_matrix = []
-for i in range(4):
+for i in range(6):
     cards_matrix.append(cards[i*6:i*6+6])
-cards_matrix.append(cards[-2:])
+cards_matrix.append(cards[-3:])
 
 # create matrix with numbers representing cards (this is the matrix the user will see)
 display_matrix = []
-for i in range(4): 
+for i in range(6): 
     display_matrix.append(list(range(i*6, i*6+6)))
-display_matrix.append([24, 25])
+display_matrix.append([36, 37, 38])
 
     
 # print instructions for game
@@ -61,15 +65,20 @@ def display_user_matrix():
         
 # play the game
 while num_sets_taken < 13:
-    for n in range(1, num_players + 1):
+    n = 1
+    while n <= num_players:
         display_user_matrix()
         first_card = int(input("Player " + str(n) + " pick the first card you'd like to flip over (type in a number from the table above - each number represents a card): "))
+        while (first_card < 0 or first_card > 25 or first_card[0] in cards_taken):
+            first_card = int(input("Invalid number. Please input a number that is valid: "))
         first_card_value = cards_matrix[int(first_card/6)][int(first_card%6)]
         display_matrix[int(first_card/6)][int(first_card%6)] = first_card_value
         print("Card one is " + first_card_value + ".")
         time.sleep(1)
         display_user_matrix()
         second_card = int(input("Player " + str(n) + " pick the second card you'd like to flip over (type in a number from the table above - each number represents a card): "))
+        while (second_card < 0 or second_card > 25 or second_card[0] in cards_taken):
+            second_card = int(input("Invalid number. Please input a number that is valid: "))
         second_card_value = cards_matrix[int(second_card/6)][int(second_card%6)]
         display_matrix[int(second_card/6)][int(second_card%6)] = second_card_value
         print("Card two is " + second_card_value + ".")
@@ -77,17 +86,16 @@ while num_sets_taken < 13:
         display_user_matrix()
         # check if the 2 cards have the same value
         if first_card_value[0] == second_card_value[0]:
-            if first_card_value[0] in cards_taken:
-                print("This set has already been taken! Look at the table!")
-            else:
-                print("You got a set!")
-                points[n - 1] += 1
-                num_sets_taken += 1
-                cards_taken.append(first_card_value[0])
+            print("You got a set!")
+            points[n - 1] += 1
+            num_sets_taken += 1
+            cards_taken.append(first_card_value[0])
+            print("You get another chance since you got a set!")
         else:
             print("That's not a set :(")
             display_matrix[int(first_card/6)][int(first_card%6)] = first_card
             display_matrix[int(second_card/6)][int(second_card%6)] = second_card 
+            n += 1
         time.sleep(2)
 
 # print out result
