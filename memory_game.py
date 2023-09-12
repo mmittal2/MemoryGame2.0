@@ -127,7 +127,7 @@ while num_cards_taken < 39:
         elif twist_decision == "steal":
             other_player = int(input("Which player do you wish to steal cards from (type in their number)?: "))
             time.sleep(1)
-            while other_player < 1 or other_player >= n:
+            while other_player < 1 or other_player > num_players or other_player == n:
                 other_player = int(input("That was an invalid input. Please input the number of another player: "))
             if first_card_value[0] in player_sets[other_player - 1]:
                 print("Congrats! You get to steal the other player's cards!")
@@ -152,8 +152,7 @@ while num_cards_taken < 39:
             if first_card_value[0] == second_card_value[0]:
                 print("You got a set of two cards!")
                 time.sleep(1)
-                third_card_decision = input(print("Do you want to try to find the third card? (yes/no): "))
-                time.sleep(1)
+                third_card_decision = input("Do you want to try to find the third card? (yes/no): ")
                 if third_card_decision.lower() == "yes":
                     third_card, third_card_value = get_card_from_user("three")
                     if third_card_value[0] == first_card_value[0]:
