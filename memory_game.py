@@ -70,19 +70,19 @@ display_matrix.append([36, 37, 38])
     
 # print instructions for game
 print("Welcome to Memory Game 2.0! Your goal is to find cards with the same value\
-    (ex: the Ace of Hearts and the Ace of Diamonds have the same value).")
-print("There are 13 sets of 3 cards each that have the same value. Players take turns \
-    flipping 2 cards each. If they flip over 2 cards with the same value, they then have the option to\
-        try to find the third card with the same value. If they choose not to, they get to keep the 2 cards they found.\
-            On the other hand, if they choose to find the third card and are successful, they get to keep all 3 cards.\
-                If they are unsuccessful, they must return the 2 cards they flipped over earlier. However, there's\
-                    an additional twist. If a player flips over their first card and remembers that the other player\
-                        has the other 2 cards with that value, they can steal those 2 cards from the other player. However,\
-                            if they choose to steal the other player's card when in fact the other player did not have those cards, \
-                                their turn ends without them getting a chance to flip over a second card. Additionally,\
-                                    if a player flips over their first card and remembers they have the other 2 cards with the\
-                                        same value, they can choose to keep that card (though they won't get any extra points by doing this).")
-print("The player with the greatest number of points wins! Sets of 2 cards are worth 2 points while sets of 3 cards are worth 4 points.")
+ (ex: the Ace of Hearts and the Ace of Diamonds have the same value).")
+print("There are 13 sets of 3 cards each that have the same value. Players take turns flipping 2 cards each.\
+ If they flip over 2 cards with the same value, they then have the option to try to find the third card with\
+ the same value. If they choose not to, they get to keep the 2 cards they found.\
+ On the other hand, if they choose to find the third card and are successful, they get to keep all 3 cards.\
+ If they are unsuccessful, they must return the 2 cards they flipped over earlier. However, there's an additional twist.\
+ If a player flips over their first card and remembers that the other player has the other 2 cards with that value,\
+ they can steal those 2 cards from the other player. However, if they choose to steal the other player's card\
+ when in fact the other player did not have those cards, their turn ends without them getting a chance to flip\
+ over a second card. Additionally, if a player flips over their first card and remembers they have the other 2\
+ cards with the same value, they can choose to keep that card (though they won't get any extra points by doing this).")
+print("The player with the greatest number of points wins! Sets of 2 cards are worth 2 points while sets of 3 cards\
+ are worth 4 points.")
 print("Let's start the game!")
 
 # keep track of number of players and set up player points and sets
