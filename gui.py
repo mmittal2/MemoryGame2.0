@@ -11,13 +11,17 @@ root.geometry("900x600")
 font_tuple = tkinter.font.Font(family="Comic Sans MS", size=12)
 
 # add cards
+
+
 # add frame
 frame = Frame(root)
 frame.pack()
+
 # resize the pictures
 card_back_img = Image.open("back.png")
 card_back_img = card_back_img.resize((60, 100))
 card_back_img = ImageTk.PhotoImage(card_back_img)
+
 # add buttons for each card
 nums = list(range(0, 39))
 x = 0
@@ -30,6 +34,7 @@ for n in nums:
     if y == 13:
         y = 0
         x += 1
+
 # add game functionality buttons
 start_game_btn = Button(root, text="Start Game", font=font_tuple)
 start_game_btn.pack()
