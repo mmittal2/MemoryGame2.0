@@ -1,9 +1,6 @@
 """
-NOTE: MUST INCORPORATE THE LOGIC FROM MEMORY_GAME INTO THE GUI
-NOTE: MAINLY, DETERMINE HOW TO CHECK THE VALUE OF A CARD WHEN IT IS CLICKED
-NOTE: ALSO FIGURE OUT HOW TO DETERMINE WHEN TO FLIP CARDS BACK OVER
-NOTE: MAKE BUTTONS BLACK ONCE THE CARD HAS BEEN TAKEN BY A PLAYER
-NOTE: ADD BUTTONS AND PROMPT REQUESTS FOR OTHER FUNCTIONALITY FOR THE GAME
+NOTE: FIGURE OUT HOW TO NOT LET ANY OTHER CARDS BE FLIPPED WHEN THEY SHOULDN'T BE
+NOTE: SECOND CARD IS NOT SHOWING BECAUSE IT FLIPS BACK OVER BEFORE IT IS SHOWN
 """
 
 
@@ -103,18 +100,6 @@ def arrange_cards(card_order, cards):
     
     # ask for number of players
     user_input_box.insert('end', "How many players are there? : ")
-    
-    """
-    # create matrix containing the card positions
-    cards_matrix = []
-    for i in range(6):
-        cards_matrix.append([])
-        for x in range(i*6, i*6+6):
-            cards_matrix[i].append(cards[CARD_ORDER[x]])
-    cards_matrix.append([])
-    for x in range(36, 39):
-        cards_matrix[-1].append(cards[CARD_ORDER[x]])
-    """
 
 
 # show the card value when a player clicks on it
@@ -128,10 +113,17 @@ def show_card_when_clicked(num, card_order, cards_flipped):
     if len(CARDS_FLIPPED) == 0:
         CARDS_FLIPPED.append(num)
         decision_after_first_card_flip()
-    if len(CARDS_FLIPPED) == 1:
+    elif len(CARDS_FLIPPED) == 1:
         CARDS_FLIPPED.append(num)
-        decision_after_second_card_flip()
-    if len(CARDS_FLIPPED) == 2:
+        if CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0] == CARDS[CARD_ORDER[CARDS_FLIPPED[1]]][0]:
+            decision_after_second_card_flip()
+        else:
+            user_input_box.delete('1.0', 'end')
+            user_input_box.insert('end', "You didn't get a set :(")
+            user_input_box.insert('end', "\nIt's Player " + str(CURR_PLAYER) + "'s turn now!")
+            user_input_box.insert('end', "\nPlayer " + str(CURR_PLAYER) + " please pick a card to flip over.")
+            no_set()
+    else:
         CARDS_FLIPPED.append(num)
         # CALL SOME FUNCTION HERE
         CARDS_FLIPPED = []
@@ -263,6 +255,7 @@ def continue_playing(window1, cards_flipped):
     global CARDS_FLIPPED
     CARDS_FLIPPED = cards_flipped
     window1.destroy()
+    user_input_box.delete('1.0', 'end')
     user_input_box.insert('end', "Player " + str(CURR_PLAYER) + " please click the second card to flip over.") 
 
 
@@ -380,7 +373,6 @@ def decision_after_first_card_flip():
     steal_btn.pack()
     keep_playing_btn = Button(window1, text="Flip Over Next Card", font=font_tuple, command=lambda: continue_playing(window1, CARDS_FLIPPED))
     keep_playing_btn.pack()
-
 def decision_after_second_card_flip():
     global CARDS_FLIPPED
     window2 = Toplevel(root, bd=20)
