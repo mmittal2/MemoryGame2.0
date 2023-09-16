@@ -234,6 +234,34 @@ def keep_card(window1):
     window1.destroy()  
 
 
+# what to do after user inputs a valid other player number when stealing a set
+def steal_valid_input(other_player):
+    global CARDS
+    global CARDS_FLIPPED
+    global CARD_ORDER
+    global PLAYER_SETS
+    global POINTS
+    global NUM_CARDS_TAKEN
+    other_player = int(other_player)
+    if CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0] in PLAYER_SETS[other_player - 1]:
+        user_input_box.delete('1.0', 'end')
+        user_input_box.insert('end', "Congrats! You get to steal the other player's cards!")
+        POINTS[CURR_PLAYER - 1] += 3
+        POINTS[other_player - 1] -= 2
+        NUM_CARDS_TAKEN += 1
+        PLAYER_SETS[CURR_PLAYER - 1].append(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
+        PLAYER_SETS[other_player - 1].remove(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
+        got_set()
+    else:
+        user_input_box.delete('1.0', 'end')
+        user_input_box.insert('end', "Player " + str(other_player) + " doesn't have the other 2 cards with the same value as the card you just chose :(")
+        user_input_box.insert('end', "\nYour turn is now over. Next player!")
+        no_set()
+    update_curr_player()
+    buttons_normal()
+    begin_next_player_turn()
+
+
 # get input from pop-up window
 def steal_response(user_input, window1):
     global CURR_PLAYER
@@ -243,82 +271,34 @@ def steal_response(user_input, window1):
     global POINTS
     global NUM_CARDS_TAKEN
     user_input_box.delete('1.0', 'end')
+    # the user inputs the number of another player for the first time
     if RESPONSES_ENTERED == 0:
         other_player = user_input.get("1.0", "end-1c")
         other_player = other_player[70:]
         other_player = other_player.strip()
-        if len(other_player) == 0:
+        # give the user another chance if they did not enter anything or did not put the number of another player
+        if len(other_player) == 0 or (len(other_player) != 0 and (int(other_player) < 1 or int(other_player) > NUM_PLAYERS or int(other_player) == CURR_PLAYER)):
             user_input.insert('end', "\nThat was an invalid input.") 
             user_input.delete('1.0', 'end')
             user_input.insert('end', "Please input the number of another player: ")
             RESPONSES_ENTERED += 1
         else:
-            other_player = int(other_player)
-            if other_player < 1 or other_player > NUM_PLAYERS or other_player == CURR_PLAYER:
-                user_input.insert('end', "\nThat was an invalid input.") 
-                user_input.delete('1.0', 'end')
-                user_input.insert('end', "Please input the number of another player: ")
-                RESPONSES_ENTERED += 1
-            else:
-                if CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0] in PLAYER_SETS[other_player - 1]:
-                    user_input_box.delete('1.0', 'end')
-                    user_input_box.insert('end', "Congrats! You get to steal the other player's cards!")
-                    POINTS[CURR_PLAYER - 1] += 3
-                    POINTS[other_player - 1] -= 2
-                    NUM_CARDS_TAKEN += 1
-                    PLAYER_SETS[CURR_PLAYER - 1].append(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
-                    PLAYER_SETS[other_player - 1].remove(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
-                    got_set()
-                else:
-                    user_input_box.delete('1.0', 'end')
-                    user_input_box.insert('end', "Player " + str(other_player) + " doesn't have the other 2 cards with the same value as the card you just chose :(")
-                    user_input_box.insert('end', "\nYour turn is now over. Next player!")
-                    no_set()
-                update_curr_player()
-                buttons_normal()
-                begin_next_player_turn()
-                RESPONSES_ENTERED = 0
-                window1.destroy()
+            steal_valid_input(other_player)
+            RESPONSES_ENTERED = 0
+            window1.destroy()
     elif RESPONSES_ENTERED == 1:
         other_player = user_input.get("1.0", "end-1c")
         other_player = other_player[43:]
         other_player = other_player.strip()
         window1.destroy()
-        if len(other_player) == 0:
+        if len(other_player) == 0 or (len(other_player) != 0 and (int(other_player) < 1 or int(other_player) > NUM_PLAYERS or int(other_player) == CURR_PLAYER)):
             update_curr_player()
             user_input_box.insert('end', "You entered another incorrect input. Your turn is over now. Next player!")
             no_set()
             buttons_normal()
             begin_next_player_turn()
         else:
-            other_player = int(other_player)
-            if other_player < 1 or other_player > NUM_PLAYERS or other_player == CURR_PLAYER:
-                update_curr_player()
-                user_input_box.insert('end', "You entered another incorrect input. Your turn is over now. Next player!")
-                no_set()
-                buttons_normal()
-                begin_next_player_turn()
-            else:
-                if CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0] in PLAYER_SETS[other_player - 1]:
-                    user_input_box.delete('1.0', 'end')
-                    user_input_box.insert('end', "Congrats! You get to steal the other player's cards!")
-                    NUM_CARDS_TAKEN += 1
-                    update_curr_player()
-                    buttons_normal()
-                    begin_next_player_turn()
-                    POINTS[CURR_PLAYER - 1] += 3
-                    POINTS[other_player - 1] -= 2
-                    PLAYER_SETS[CURR_PLAYER - 1].append(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
-                    PLAYER_SETS[other_player - 1].remove(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
-                    got_set()
-                else:
-                    user_input_box.delete('1.0', 'end')
-                    user_input_box.insert('end', "Player " + str(other_player) + " doesn't have the other 2 cards with the same value as the card you just chose :(")
-                    update_curr_player()
-                    user_input_box.insert('end', "\nYour turn is now over. Next player!")
-                    buttons_normal()
-                    begin_next_player_turn()
-                    no_set()
+            steal_valid_input(other_player)
         RESPONSES_ENTERED = 0
 
 
