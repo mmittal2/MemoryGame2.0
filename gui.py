@@ -1,8 +1,8 @@
 """
 NOTE: FIGURE OUT HOW TO NOT LET ANY OTHER CARDS BE FLIPPED WHEN THEY SHOULDN'T BE
-NOTE: DELETE NUM_CARDS_TAKEN AT END BECAUSE CURRENTLY NOT USING IT
+NOTE: FIGURE OUT HOW TO USE LABELS INSTEAD OF TEXT WIDGETS FOR THE INSTRUCTIONS AND OTHER WORDS THAT SHOULDN'T BE EDITABLE
 NOTE: IF TIME, WORK ON DESIGN
-NOTE: IF TIME, DELETE REPETITIVE CODE AND ADD COMMENTS (MAKE CODE NEATER AND EASIER TO READ/UNDERSTAND)
+NOTE: IF TIME, DELETE REPETITIVE CODE AND ADD COMMENTS (MAKE CODE NEATER AND EASIER TO READ/UNDERSTAND) - especially for the insert statements can use a function instead of rewriting same one's every time
 """
 
 
@@ -17,13 +17,19 @@ import random
 # define all variables used across multiple methods as global variables
 CARD_ORDER = []
 CARDS_FLIPPED = []
-NUM_CARDS_TAKEN = 0
 PLAYER_SETS = []
 POINTS = []
 NUM_PLAYERS = None
 CURR_PLAYER = 1
 CARDS = []
 RESPONSES_ENTERED = 0
+NUM_CARDS_TAKEN = 0
+
+
+# ask next player to pick a card
+def begin_next_player_turn():
+    user_input_box.insert('end', "\nIt's Player " + str(CURR_PLAYER) + "'s turn now!")
+    user_input_box.insert('end', "\nPlayer " + str(CURR_PLAYER) + " please click the first card to flip over.")
 
 
 # change matrix after a set of cards is chosen
@@ -32,7 +38,8 @@ def got_set():
     for c in CARDS_FLIPPED:
         buttons[c].destroy()
     CARDS_FLIPPED = []
-    if len(buttons) == 0:
+    # print out the game results if there are no more buttons left (meaning all cards have been taken)
+    if NUM_CARDS_TAKEN == 39:
         results_window = Toplevel(root, bd=20)
         results_window.geometry("700x500")
         results_window.title("Game Over!")
@@ -53,6 +60,7 @@ def got_set():
         results_box = Text(pop_up_window, font=font_tuple)
         results_box.pack()
         results_box.insert('end', results)
+        root.destroy()
         
 # change matrix after no set was chosen
 def no_set():
@@ -128,8 +136,7 @@ def close_cards(button):
     no_set()
     update_curr_player()
     user_input_box.delete('1.0', 'end')
-    user_input_box.insert('end', "\nIt's Player " + str(CURR_PLAYER) + "'s turn now!")
-    user_input_box.insert('end', "\nPlayer " + str(CURR_PLAYER) + " please pick a card to flip over.")
+    begin_next_player_turn()
     button.destroy()
     
 
@@ -143,13 +150,12 @@ def show_card_when_clicked(num):
     buttons[num].config(image=card_images[CARD_ORDER[num]])
     if len(CARDS_FLIPPED) == 0:
         CARDS_FLIPPED.append(num)
-        decision_after_first_card_flip(num)
+        decision_after_first_card_flip()
     elif len(CARDS_FLIPPED) == 1:
         CARDS_FLIPPED.append(num)
         if CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0] == CARDS[CARD_ORDER[CARDS_FLIPPED[1]]][0]:
             decision_after_second_card_flip()
         else:
-            update_curr_player()
             user_input_box.delete('1.0', 'end')
             user_input_box.insert('end', "You didn't get a set :(")
             close_cards_btn = Button(root, text="Close Cards", font=font_tuple, command=lambda: close_cards(close_cards_btn))
@@ -160,10 +166,10 @@ def show_card_when_clicked(num):
         user_input_box.delete('1.0', 'end')
         if CARDS[CARD_ORDER[CARDS_FLIPPED[2]]][0] == CARDS[CARD_ORDER[CARDS_FLIPPED[1]]][0]:
             user_input_box.insert('end', "You got the full set of three cards!")
-            POINTS[num - 1] += 4
+            POINTS[CURR_PLAYER - 1] += 4
+            PLAYER_SETS[CURR_PLAYER - 1].append(CARDS[CARD_ORDER[CARDS_FLIPPED[2]]][0])
             NUM_CARDS_TAKEN += 3
             got_set()
-            PLAYER_SETS[num - 1].append(CARDS[CARD_ORDER[CARDS_FLIPPED[2]]][0])
             user_input_box.insert('end', "\nYou get another chance since you got a set!")
             user_input_box.insert('end', "\nPlayer " + str(CURR_PLAYER) + " please click the first card to flip over.")
         else:
@@ -180,18 +186,20 @@ def keep_card(window1):
     global CURR_PLAYER
     global CARDS
     global CARD_ORDER
+    global NUM_CARDS_TAKEN
     user_input_box.delete('1.0', 'end')
     if CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0] in PLAYER_SETS[CURR_PLAYER - 1]:
         update_curr_player()
         user_input_box.insert('end', "Congrats! You get to keep this card! Next player!")
-        user_input_box.insert('end', "\nIt's Player " + str(CURR_PLAYER) + "'s turn now! Please click on a card to flip over.") 
+        NUM_CARDS_TAKEN += 1
         got_set()
+        begin_next_player_turn() 
     else:
         user_input_box.insert('end', "You do not have the other 2 cards with the same value as the card you just chose :(")
         user_input_box.insert('end', "\nThis marks the end of your turn!")
         no_set()
         update_curr_player()
-        user_input_box.insert('end', "\nNext Player (Player " + str(CURR_PLAYER) + ")! Please click on a card to flip over.")
+        begin_next_player_turn()
     window1.destroy()  
 
 
@@ -202,6 +210,7 @@ def steal_response(user_input, window1):
     global CARDS_FLIPPED
     global PLAYER_SETS
     global POINTS
+    global NUM_CARDS_TAKEN
     user_input_box.delete('1.0', 'end')
     if RESPONSES_ENTERED == 0:
         other_player = user_input.get("1.0", "end-1c")
@@ -223,9 +232,9 @@ def steal_response(user_input, window1):
                 if CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0] in PLAYER_SETS[other_player - 1]:
                     user_input_box.delete('1.0', 'end')
                     user_input_box.insert('end', "Congrats! You get to steal the other player's cards!")
-                    user_input_box.insert('end', "\nIt's Player " + str(CURR_PLAYER) + "'s turn now! Please click on a card to flip over.") 
                     POINTS[CURR_PLAYER - 1] += 3
                     POINTS[other_player - 1] -= 2
+                    NUM_CARDS_TAKEN += 1
                     PLAYER_SETS[CURR_PLAYER - 1].append(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
                     PLAYER_SETS[other_player - 1].remove(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
                     got_set()
@@ -233,9 +242,9 @@ def steal_response(user_input, window1):
                     user_input_box.delete('1.0', 'end')
                     user_input_box.insert('end', "Player " + str(other_player) + " doesn't have the other 2 cards with the same value as the card you just chose :(")
                     user_input_box.insert('end', "\nYour turn is now over. Next player!")
-                    user_input_box.insert('end', "\nPlayer " + str(CURR_PLAYER) + " please click on a card to flip over.")
                     no_set()
                 update_curr_player()
+                begin_next_player_turn()
                 RESPONSES_ENTERED = 0
                 window1.destroy()
     elif RESPONSES_ENTERED == 1:
@@ -247,20 +256,21 @@ def steal_response(user_input, window1):
             update_curr_player()
             user_input_box.insert('end', "You entered another incorrect input. Your turn is over now. Next player!")
             no_set()
-            user_input_box.insert('end', "\nPlayer " + str(CURR_PLAYER) + " please pick a card to flip over.")
+            begin_next_player_turn()
         else:
             other_player = int(other_player)
             if other_player < 1 or other_player > NUM_PLAYERS or other_player == CURR_PLAYER:
                 update_curr_player()
-                user_input_box.insert('end', "You entered another incoorect input. Your turn is over now. Next player!")
-                user_input_box.insert('end', "\nPlayer " + str(CURR_PLAYER) + " please pick a card to flip over.")
+                user_input_box.insert('end', "You entered another incorrect input. Your turn is over now. Next player!")
+                begin_next_player_turn()
                 no_set()
             else:
                 if CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0] in PLAYER_SETS[other_player - 1]:
                     user_input_box.delete('1.0', 'end')
                     user_input_box.insert('end', "Congrats! You get to steal the other player's cards!")
+                    NUM_CARDS_TAKEN += 1
                     update_curr_player()
-                    user_input_box.insert('end', "\nIt's Player " + str(CURR_PLAYER) + "'s turn now! Please click on a card to flip over.") 
+                    begin_next_player_turn()
                     POINTS[CURR_PLAYER - 1] += 3
                     POINTS[other_player - 1] -= 2
                     PLAYER_SETS[CURR_PLAYER - 1].append(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
@@ -271,7 +281,7 @@ def steal_response(user_input, window1):
                     user_input_box.insert('end', "Player " + str(other_player) + " doesn't have the other 2 cards with the same value as the card you just chose :(")
                     update_curr_player()
                     user_input_box.insert('end', "\nYour turn is now over. Next player!")
-                    user_input_box.insert('end', "\nIt's Player " + str(CURR_PLAYER) + "'s turn now! Please click on a card to flip over.") 
+                    begin_next_player_turn()
                     no_set()
         RESPONSES_ENTERED = 0
 
@@ -293,18 +303,18 @@ def continue_playing(window1):
 
 
 # let user keep 2 card set after flipping over 2nd card
-def keep_set(window2, num):
+def keep_set(window2):
     global POINTS
-    global NUM_CARDS_TAKEN
     global PLAYER_SETS
+    global NUM_CARDS_TAKEN
     window2.destroy()
     user_input_box.delete('1.0', 'end')
-    POINTS[num - 1] += 2
+    POINTS[CURR_PLAYER - 1] += 2
+    PLAYER_SETS[CURR_PLAYER - 1].append(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
     NUM_CARDS_TAKEN += 2
-    PLAYER_SETS[num - 1].append(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
     got_set()
     user_input_box.insert('end', "You get another chance since you got a set!")
-    user_input_box.insert('end', "Player " + str(CURR_PLAYER) + " please click the first card to flip over.")
+    user_input_box.insert('end', "\nPlayer " + str(CURR_PLAYER) + " please click the first card to flip over.")
     
     
 # let user flip over a third card after finding a 2 card set
@@ -398,7 +408,7 @@ words.insert('end', instructions)
 
 
 # add 2 pop-up windows to ask for user input after they flip over a card
-def decision_after_first_card_flip(num):
+def decision_after_first_card_flip():
     window1 = Toplevel(root, bd=20)
     window1.geometry("700x500")
     window1.title("Decision after 1st Card Flip")
@@ -416,7 +426,7 @@ def decision_after_second_card_flip():
     window2 = Toplevel(root, bd=20)
     window2.geometry("700x500")
     window2.title("Decision after Getting a 2 Card Set")
-    keep_set_btn = Button(window2, text="Keep Current Set of 2 Cards", font=font_tuple, command=lambda: keep_set(window2, num))
+    keep_set_btn = Button(window2, text="Keep Current Set of 2 Cards", font=font_tuple, command=lambda: keep_set(window2))
     keep_set_btn.pack()
     find_third_card_btn = Button(window2, text="Flip Over a Third Card", font=font_tuple, command=lambda: flip_third_card(window2))
     find_third_card_btn.pack()
