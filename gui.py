@@ -56,8 +56,8 @@ def got_set():
         results = "THE GAME IS OVER! \n THE WINNER IS PLAYER " + winners + "won!"
         results += "\nBelow are the number of sets that each player collected:"
         for i in range(len(POINTS)):
-            results += "\nPlayer " + str(i + 1) + ": " + POINTS[i] + " points"
-        results_box = Text(pop_up_window, font=font_tuple)
+            results += "\nPlayer " + str(i + 1) + ": " + str(POINTS[i]) + " points"
+        results_box = Text(results_window, font=font_tuple)
         results_box.pack()
         results_box.insert('end', results)
         root.destroy()
@@ -94,6 +94,7 @@ def submit_player_num():
         POINTS.append(0)
         PLAYER_SETS.append([])
     user_input_box.insert('end', "\nThere are " + str(NUM_PLAYERS) + " players.")
+    submit_btn.destroy()
     user_input_box.insert('end', "\nIt's Player 1's turn now!")
     user_input_box.insert('end', "\nPlayer 1, click on a card to flip over.")
 
@@ -380,7 +381,7 @@ user_input_box.pack(pady=10)
 
 
 # add submit button for user input
-submit_btn = Button(root, text="Submit Response", font=font_tuple, command=lambda: submit_player_num())
+submit_btn = Button(root, text="Submit Response", font=font_tuple, command=lambda: submit_player_num(submit_btn))
 submit_btn.pack()
 
 
