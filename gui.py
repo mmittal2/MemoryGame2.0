@@ -2,6 +2,7 @@
 NOTE: FIGURE OUT HOW TO NOT LET ANY OTHER CARDS BE FLIPPED WHEN THEY SHOULDN'T BE
 NOTE: DELETE NUM_CARDS_TAKEN AT END BECAUSE CURRENTLY NOT USING IT
 NOTE: IF TIME, WORK ON DESIGN
+NOTE: IF TIME, DELETE REPETITIVE CODE AND ADD COMMENTS (MAKE CODE NEATER AND EASIER TO READ/UNDERSTAND)
 """
 
 
@@ -142,7 +143,7 @@ def show_card_when_clicked(num):
     buttons[num].config(image=card_images[CARD_ORDER[num]])
     if len(CARDS_FLIPPED) == 0:
         CARDS_FLIPPED.append(num)
-        decision_after_first_card_flip()
+        decision_after_first_card_flip(num)
     elif len(CARDS_FLIPPED) == 1:
         CARDS_FLIPPED.append(num)
         if CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0] == CARDS[CARD_ORDER[CARDS_FLIPPED[1]]][0]:
@@ -292,8 +293,18 @@ def continue_playing(window1):
 
 
 # let user keep 2 card set after flipping over 2nd card
-def keep_set(window2):
+def keep_set(window2, num):
+    global POINTS
+    global NUM_CARDS_TAKEN
+    global PLAYER_SETS
     window2.destroy()
+    user_input_box.delete('1.0', 'end')
+    POINTS[num - 1] += 2
+    NUM_CARDS_TAKEN += 2
+    PLAYER_SETS[num - 1].append(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
+    got_set()
+    user_input_box.insert('end', "You get another chance since you got a set!")
+    user_input_box.insert('end', "Player " + str(CURR_PLAYER) + " please click the first card to flip over.")
     
     
 # let user flip over a third card after finding a 2 card set
@@ -387,7 +398,7 @@ words.insert('end', instructions)
 
 
 # add 2 pop-up windows to ask for user input after they flip over a card
-def decision_after_first_card_flip():
+def decision_after_first_card_flip(num):
     window1 = Toplevel(root, bd=20)
     window1.geometry("700x500")
     window1.title("Decision after 1st Card Flip")
@@ -405,7 +416,7 @@ def decision_after_second_card_flip():
     window2 = Toplevel(root, bd=20)
     window2.geometry("700x500")
     window2.title("Decision after Getting a 2 Card Set")
-    keep_set_btn = Button(window2, text="Keep Current Set of 2 Cards", font=font_tuple, command=lambda: keep_set(window2))
+    keep_set_btn = Button(window2, text="Keep Current Set of 2 Cards", font=font_tuple, command=lambda: keep_set(window2, num))
     keep_set_btn.pack()
     find_third_card_btn = Button(window2, text="Flip Over a Third Card", font=font_tuple, command=lambda: flip_third_card(window2))
     find_third_card_btn.pack()
