@@ -1,7 +1,6 @@
 """
 NOTE: IF TIME, FIGURE OUT HOW TO USE LABELS INSTEAD OF TEXT WIDGETS FOR THE INSTRUCTIONS AND OTHER WORDS THAT SHOULDN'T BE EDITABLE
 NOTE: IF TIME, WORK ON DESIGN
-NOTE: IF TIME, DELETE REPETITIVE CODE AND ADD COMMENTS (MAKE CODE NEATER AND EASIER TO READ/UNDERSTAND) - especially for steal_cards
 NOTE: IF TIME, FIGURE OUT HOW TO ADD A RESTART GAME BUTTON
 NOTE: NEED TO PLAY THE GAME A COUPLE TIMES TO MAKE SURE EVERYTHING IS WORKING CORRECTLY
 """
@@ -467,7 +466,6 @@ def decision_after_first_card_flip(num):
     steal_btn.pack()
     keep_playing_btn = Button(window1, text="Flip Over Next Card", font=font_tuple, command=lambda: continue_playing(window1, num))
     keep_playing_btn.pack()
-    
 def decision_after_second_card_flip(num):
     window2 = Toplevel(root, bd=20)
     window2.geometry("700x500")
