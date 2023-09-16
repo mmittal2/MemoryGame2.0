@@ -25,6 +25,7 @@ CURR_PLAYER = 1
 CARDS = []
 RESPONSES_ENTERED = 0
 NUM_CARDS_TAKEN = 0
+CARDS_TAKEN = []
 
 
 # ask next player to pick a card
@@ -35,9 +36,12 @@ def begin_next_player_turn():
 
 # change matrix after a set of cards is chosen
 def got_set():
+    global buttons
     global CARDS_FLIPPED
+    global CARDS_TAKEN
     for c in CARDS_FLIPPED:
         buttons[c].destroy()
+        CARDS_TAKEN.append(c)
     CARDS_FLIPPED = []
     # print out the game results if there are no more buttons left (meaning all cards have been taken)
     if NUM_CARDS_TAKEN == 39:
@@ -54,18 +58,20 @@ def got_set():
         for w in winner:
             winners += str(w) + " and "
         winners = winners[:-5]
-        results = "THE GAME IS OVER! \n THE WINNER IS PLAYER " + winners + "won!"
-        results += "\nBelow are the number of sets that each player collected:"
+        results = "THE GAME IS OVER! \nPLAYER " + winners + " WON!"
+        results += "\n\nBelow are the number of sets that each player collected:"
         for i in range(len(POINTS)):
-            results += "\nPlayer " + str(i + 1) + ": " + str(POINTS[i]) + " points"
+            results += "\n\tPlayer " + str(i + 1) + ": " + str(POINTS[i]) + " points"
         results_box = Text(results_window, font=font_tuple)
         results_box.pack()
         results_box.insert('end', results)
-        root.destroy()
+        end_game_btn = Button(results_window, text="End Game", font=font_tuple, command=root.destroy)
+        end_game_btn.pack()
         
 # change matrix after no set was chosen
 def no_set():
     global CARDS_FLIPPED
+    global buttons
     for c in CARDS_FLIPPED:
         buttons[c].config(image=card_back_img)
     CARDS_FLIPPED = []
@@ -138,9 +144,14 @@ def arrange_cards(button):
     
 
 # make all the buttons clickable again
-def buttons_normal():
+def buttons_normal(num=None):
+    global buttons
     for x in range(0, len(buttons)):
-        buttons[x]["state"] = NORMAL
+        if not(x in CARDS_TAKEN):
+            if num != None and x != num:
+                buttons[x]["state"] = NORMAL
+            elif num == None:
+                buttons[x]["state"] = NORMAL
 
 
 # close cards after 2 cards are chosen
@@ -155,6 +166,7 @@ def close_cards(button):
 
 # show the card value when a player clicks on it
 def show_card_when_clicked(num):
+    global buttons
     global CARD_ORDER
     global CARDS_FLIPPED
     global CURR_PLAYER
@@ -162,15 +174,15 @@ def show_card_when_clicked(num):
     global NUM_CARDS_TAKEN
     buttons[num].config(image=card_images[CARD_ORDER[num]])
     for x in range(0, len(buttons)):
-        if x != num:
+        if not(x in CARDS_TAKEN):
             buttons[x]["state"] = DISABLED
     if len(CARDS_FLIPPED) == 0:
         CARDS_FLIPPED.append(num)
-        decision_after_first_card_flip()
+        decision_after_first_card_flip(num)
     elif len(CARDS_FLIPPED) == 1:
         CARDS_FLIPPED.append(num)
         if CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0] == CARDS[CARD_ORDER[CARDS_FLIPPED[1]]][0]:
-            decision_after_second_card_flip()
+            decision_after_second_card_flip(num)
         else:
             user_input_box.delete('1.0', 'end')
             user_input_box.insert('end', "You didn't get a set :(")
@@ -320,10 +332,10 @@ def steal_card(window1):
 
 
 # let the user flip over the next card after their 1st one
-def continue_playing(window1):
+def continue_playing(window1, num):
     window1.destroy()
     user_input_box.delete('1.0', 'end')
-    buttons_normal()
+    buttons_normal(num)
     user_input_box.insert('end', "Player " + str(CURR_PLAYER) + " please click the second card to flip over.") 
 
 
@@ -344,10 +356,10 @@ def keep_set(window2):
     
     
 # let user flip over a third card after finding a 2 card set
-def flip_third_card(window2):
+def flip_third_card(window2, num):
     window2.destroy()
     user_input_box.delete('1.0', 'end')
-    buttons_normal()
+    buttons_normal(num)
     user_input_box.insert('end', "Player " + str(CURR_PLAYER) + " please click on the third card to flip over.")
     
 
@@ -436,7 +448,7 @@ words.insert('end', instructions)
 
 
 # add 2 pop-up windows to ask for user input after they flip over a card
-def decision_after_first_card_flip():
+def decision_after_first_card_flip(num):
     window1 = Toplevel(root, bd=20)
     window1.geometry("700x500")
     window1.title("Decision after 1st Card Flip")
@@ -448,15 +460,15 @@ def decision_after_first_card_flip():
     keep_btn.pack()
     steal_btn = Button(window1, text="Steal Card from Another Player", font=font_tuple, command=lambda: steal_card(window1))
     steal_btn.pack()
-    keep_playing_btn = Button(window1, text="Flip Over Next Card", font=font_tuple, command=lambda: continue_playing(window1))
+    keep_playing_btn = Button(window1, text="Flip Over Next Card", font=font_tuple, command=lambda: continue_playing(window1, num))
     keep_playing_btn.pack()
-def decision_after_second_card_flip():
+def decision_after_second_card_flip(num):
     window2 = Toplevel(root, bd=20)
     window2.geometry("700x500")
     window2.title("Decision after Getting a 2 Card Set")
     keep_set_btn = Button(window2, text="Keep Current Set of 2 Cards", font=font_tuple, command=lambda: keep_set(window2))
     keep_set_btn.pack()
-    find_third_card_btn = Button(window2, text="Flip Over a Third Card", font=font_tuple, command=lambda: flip_third_card(window2))
+    find_third_card_btn = Button(window2, text="Flip Over a Third Card", font=font_tuple, command=lambda: flip_third_card(window2, num))
     find_third_card_btn.pack()
 
 
