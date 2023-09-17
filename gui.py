@@ -262,7 +262,7 @@ def steal_valid_input(other_player):
     if CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0] in PLAYER_SETS[other_player - 1]:
         user_input_box.delete('1.0', 'end')
         user_input_box.insert('end', "Congrats! You get to steal the other player's cards!")
-        POINTS[CURR_PLAYER - 1] += 3
+        POINTS[CURR_PLAYER - 1] += 4
         POINTS[other_player - 1] -= 2
         NUM_CARDS_TAKEN += 1
         PLAYER_SETS[CURR_PLAYER - 1].append(CARDS[CARD_ORDER[CARDS_FLIPPED[0]]][0])
