@@ -52,9 +52,9 @@ def got_set():
         # calculate the winner based on points
         winner = [1]
         for i in range(1, len(POINTS)):
-            if POINTS[i] > POINTS[winner[0]]:
+            if POINTS[i] > POINTS[winner[0] - 1]:
                 winner = [i + 1]
-            elif POINTS[i] == POINTS[winner[0]]:
+            elif POINTS[i] == POINTS[winner[0] - 1]:
                 winner.append(i + 1)
         # display the winners in the window
         winners = ""
