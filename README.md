@@ -2,6 +2,9 @@
 First project for Advanced Software Projects class.
 
 
+NOTE: To run the game/project, please run the gui.py file and not the memory_game.py file.
+
+
 
 
 DESIGN DOC:
@@ -21,3 +24,10 @@ Procedure:
 3. Edit the logic for the code so that it works with the graphical user interface.
 4. If time, add code to enable players to play the version with the twist if they wish.
 5. If time, add design elements to enhance the graphical user interface.
+
+
+
+
+IMPROVEMENTS FOR LATER:
+1. USE LABELS INSTEAD OF TEXT WIDGETS FOR THE INSTRUCTIONS AND OTHER WORDS THAT SHOULDN'T BE EDITABLE
+3. ADD A RESTART GAME BUTTON
