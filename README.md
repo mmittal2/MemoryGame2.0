@@ -1,5 +1,4 @@
-# AdvancedSoftwareProjects_Project1
-First project for Advanced Software Projects class.
+# Memory Game 2.0
 
 
 NOTE: To run the game/project, please run the gui.py file and not the memory_game.py file.
